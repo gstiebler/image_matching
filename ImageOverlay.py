@@ -1,19 +1,49 @@
 import numpy as np
 import cv2
 
+BAR_LEN_FACTOR = 0.06
+
 imgs_folder = '../Images/'
 
 MovIm = cv2.imread(imgs_folder + 'g_009.tif', 0)
 FixIm = cv2.imread(imgs_folder + 'Slice69.tif', 0)
 
-print MovIm.shape
-print FixIm.shape
+# Invert the image
+FixIm = 255 - FixIm
 
-cv2.imshow(MovIm)
+FixImHeight = FixIm.shape[0]
+# calculate the height of the bar
+barLen = int(FixImHeight * BAR_LEN_FACTOR)
 
-print "teste"
+# remove the bar on both images
+FixIm = FixIm[:-barLen, :]
+MovIm = MovIm[:-barLen, :]
 
-cv2.imwrite(MovIm, 'teste.jpg')
+# equalize histogram
+FixIm = cv2.equalizeHist(FixIm)
+MovIm = cv2.equalizeHist(MovIm)
 
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+# blur (window size must be odd)
+FixIm = cv2.GaussianBlur(FixIm, (41, 41), 10)
+
+# TODO resize?
+
+# With sift, not available on default OpenCV installation
+# sift = cv2.xfeatures2d.SIFT_create()
+# kp = sift.detect(FixIm, None)
+# FixImKp = cv2.drawKeypoints(FixIm, kp)
+
+# Initiate ORB detector
+orb = cv2.ORB()
+# find the keypoints with ORB
+kp = orb.detect(FixIm, None)
+# compute the descriptors with ORB
+kp, des = orb.compute(FixIm, kp)
+# draw only keypoints location,not size and orientation
+FixImKp = cv2.drawKeypoints(FixIm, kp, None, color=(0,255,0), flags=0)
+
+
+# write the result images to file
+cv2.imwrite('FixIm.tif', FixIm)
+cv2.imwrite('FixImKp.tif', FixImKp)
+cv2.imwrite('MovIm.tif', MovIm)
