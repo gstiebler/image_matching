@@ -67,13 +67,21 @@ selected_mov_kp = np.array([selected_mov_kp]).astype(np.int)
 # Draw the selected matches
 matches_im = drawMatches(FixIm, FixKp, MovIm, MovKp, selected_matches)
 
+# testing detecting the matching points automatically
+mat = cv2.estimateRigidTransform(selected_fix_kp, selected_mov_kp, True)
+
+rows, cols = FixIm.shape
+warped_fix_im = cv2.warpAffine(FixIm, mat, (cols,rows))
+
+merged_im = cv2.addWeighted(MovIm, 0.5, warped_fix_im, 0.5, 0.0)
+
+print mat
+
 # write the result images to file
 cv2.imwrite('FixIm.tif', FixIm)
 cv2.imwrite('FixImKp.tif', FixImKp)
 cv2.imwrite('MovIm.tif', MovIm)
 cv2.imwrite('MovImKp.tif', MovImKp)
 cv2.imwrite('matches.tif', matches_im)
-
-# testing detecting the matching points automatically
-mat = cv2.estimateRigidTransform(selected_fix_kp, selected_mov_kp, True)
-print mat
+cv2.imwrite('warped.tif', warped_fix_im)
+cv2.imwrite('merged.tif', merged_im)
