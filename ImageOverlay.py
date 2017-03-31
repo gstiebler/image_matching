@@ -35,15 +35,24 @@ FixIm = cv2.GaussianBlur(FixIm, (41, 41), 10)
 
 # Initiate ORB detector
 orb = cv2.ORB()
+
 # find the keypoints with ORB
-kp = orb.detect(FixIm, None)
+FixKp = orb.detect(FixIm, None)
 # compute the descriptors with ORB
-kp, des = orb.compute(FixIm, kp)
+FixKp, des = orb.compute(FixIm, FixKp)
 # draw only keypoints location,not size and orientation
-FixImKp = cv2.drawKeypoints(FixIm, kp, None, color=(0,255,0), flags=0)
+FixImKp = cv2.drawKeypoints(FixIm, FixKp, None, color=(0,255,0), flags=0)
+
+# find the keypoints with ORB
+MovKp = orb.detect(MovIm, None)
+# compute the descriptors with ORB
+MovKp, des = orb.compute(MovIm, MovKp)
+# draw only keypoints location,not size and orientation
+MovImKp = cv2.drawKeypoints(MovIm, MovKp, None, color=(0,255,0), flags=0)
 
 
 # write the result images to file
 cv2.imwrite('FixIm.tif', FixIm)
 cv2.imwrite('FixImKp.tif', FixImKp)
 cv2.imwrite('MovIm.tif', MovIm)
+cv2.imwrite('MovImKp.tif', MovImKp)
