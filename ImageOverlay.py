@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+import math
 from DrawMatches import drawMatches
 
 BAR_LEN_FACTOR = 0.06
@@ -76,6 +77,25 @@ warped_fix_im = cv2.warpAffine(FixIm, mat, (cols,rows))
 merged_im = cv2.addWeighted(MovIm, 0.5, warped_fix_im, 0.5, 0.0)
 
 print mat
+
+# getting the translation, scale and rotation components from the matrix
+tx = mat[0, 2]
+ty = mat[1, 2]
+
+a = mat[0, 0]
+b = mat[0, 1]
+c = mat[1, 0]
+d = mat[1, 1]
+
+sx = math.sqrt(math.pow(a, 2) + math.pow(c, 2))
+sy = math.sqrt(math.pow(b, 2) + math.pow(d, 2))
+
+t1 = math.atan(c / d)
+t2 = math.atan(-b / a)
+
+print "translation: %f, %f" % (tx, ty)
+print "scale: %f, %f" % (sx, sy)
+print "rotation: %f and %f" % (t1, t2)
 
 # write the result images to file
 cv2.imwrite('FixIm.tif', FixIm)
