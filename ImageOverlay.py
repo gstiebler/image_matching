@@ -4,6 +4,7 @@ import math
 from DrawMatches import drawMatches
 
 BAR_LEN_FACTOR = 0.06
+NUM_SELECTED_KP = 10
 
 imgs_folder = '../Images/'
 
@@ -55,8 +56,8 @@ matches = bf.match(FixDes, MovDes)
 # Sort them in the order of their distance.
 sorted_matches = sorted(matches, key = lambda x:x.distance)
 
-# get the 10 best matches
-selected_matches = sorted_matches[:10]
+# get the best matches
+selected_matches = sorted_matches[:NUM_SELECTED_KP]
 
 # get keypoints for selected matches
 selected_fix_kp = [list(FixKp[m.queryIdx].pt) for m in selected_matches]
